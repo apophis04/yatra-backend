@@ -22,13 +22,24 @@ def register(user: RegisterModel):
     try:
         users.insert_one({
             "username": user.username,
-            "password": hashed_password
+            "password": hashed_password,
+            "firstName": user.firstName,
+            "lastName": user.lastName,
+            "email": user.email,
+            "contact": user.contact
         })
     except DuplicateKeyError:
         raise HTTPException(status_code=400, detail="Username already taken")
 
     token = create_access_token({"sub": user.username})
-    return {"username": user.username, "token": token}
+    return {
+        "username": user.username,
+        "firstName": user.firstName,
+        "lastName": user.lastName,
+        "email": user.email,
+        "contact": user.contact,
+        "token": token
+    }
 
 @router.post("/login")
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
